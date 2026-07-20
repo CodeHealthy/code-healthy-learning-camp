@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import { CourseCard } from "@/components/home/course-card";
-import { Header } from "@/components/layout/header";
-import { SiteFooter } from "@/components/layout/site-footer";
+
 import { courses } from "@/data/courses";
 
 export const metadata: Metadata = {
@@ -14,9 +13,8 @@ export const metadata: Metadata = {
 export default function LearningPathsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
 
-      <main>
+      <main id="main-content">
         <section className="relative overflow-hidden border-b border-border bg-surface">
           <div
             aria-hidden="true"
@@ -65,7 +63,6 @@ export default function LearningPathsPage() {
         </section>
       </main>
 
-      <SiteFooter />
     </div>
   );
 }

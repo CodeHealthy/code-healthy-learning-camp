@@ -8,8 +8,7 @@ import {
     Lightbulb,
 } from "lucide-react";
 
-import { Header } from "@/components/layout/header";
-import { SiteFooter } from "@/components/layout/site-footer";
+
 import { MultipleChoiceQuiz } from "@/components/learning/multiple-choice-quiz";
 import { VariableMemoryDemo } from "@/components/learning/variable-memory-demo";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -30,9 +29,8 @@ const takeaways = [
 export default function VariablesLessonPage() {
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <Header />
 
-            <main>
+            <main id="main-content">
                 <article>
                     <header className="relative overflow-hidden border-b border-border bg-surface">
                         <div
@@ -280,7 +278,6 @@ console.log(total);`}
                 </article>
             </main>
 
-            <SiteFooter />
         </div>
     );
 }

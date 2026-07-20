@@ -9,8 +9,7 @@ import {
 } from "lucide-react";
 
 import { CourseCard } from "@/components/home/course-card";
-import { Header } from "@/components/layout/header";
-import { SiteFooter } from "@/components/layout/site-footer";
+
 import { courses } from "@/data/courses";
 
 const learningFeatures = [
@@ -37,9 +36,8 @@ const learningFeatures = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
 
-      <main>
+      <main id="main-content">
         <section className="relative overflow-hidden border-b border-border bg-surface">
           <div
             aria-hidden="true"
@@ -209,7 +207,6 @@ export default function HomePage() {
         </section>
       </main>
 
-      <SiteFooter />
     </div>
   );
 }

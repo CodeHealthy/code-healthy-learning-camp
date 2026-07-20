@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 
+import { SkipLink } from "@/components/accessibility/skip-link";
+import { Header } from "@/components/layout/header";
+import { SiteFooter } from "@/components/layout/site-footer";
 
 import "./globals.css";
 
@@ -38,7 +41,7 @@ const themeInitializationScript = `
     root.dataset.theme = theme;
     root.classList.toggle("dark", isDark);
     root.style.colorScheme = isDark ? "dark" : "light";
-  } catch (error) {
+  } catch {
     document.documentElement.dataset.theme = "system";
   }
 })();
@@ -54,24 +57,33 @@ export const metadata: Metadata = {
     "Learn programming fundamentals, React, Spring Boot, Redis, Apache Kafka, SQL, NoSQL and object-oriented programming through interactive visual explanations.",
 };
 
-type RootLayoutProps = Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>;
+}
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
       >
-        {children}
-
-        <Script
-          id="theme-initializer"
-          strategy="beforeInteractive"
-        >
+        <Script id="theme-initializer" strategy="beforeInteractive">
           {themeInitializationScript}
         </Script>
+
+        <SkipLink />
+
+        <div className="flex min-h-screen flex-col">
+          <Header />
+
+          <div className="flex-1">{children}</div>
+
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );

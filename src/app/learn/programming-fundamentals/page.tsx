@@ -11,8 +11,7 @@ import {
 } from "lucide-react";
 
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
-import { Header } from "@/components/layout/header";
-import { SiteFooter } from "@/components/layout/site-footer";
+
 
 export const metadata: Metadata = {
   title: "Programming Fundamentals",
@@ -62,9 +61,8 @@ const lessons = [
 export default function ProgrammingFundamentalsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
 
-      <main>
+      <main id="main-content">
         <section className="relative overflow-hidden border-b border-border bg-surface">
           <div
             aria-hidden="true"
@@ -241,7 +239,6 @@ export default function ProgrammingFundamentalsPage() {
         </section>
       </main>
 
-      <SiteFooter />
     </div>
   );
 }
