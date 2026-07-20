@@ -11,6 +11,7 @@ import {
     Code2,
     Database,
     Monitor,
+    RotateCcw,
     Settings2,
 } from "lucide-react";
 import {
@@ -24,6 +25,7 @@ import { VisualizationControls } from "@/components/visualizations/visualization
 import type { PlaybackSpeed } from "@/components/visualizations/visualization-controls";
 import { VisualizationShell } from "@/components/visualizations/visualization-shell";
 import { VisualizationTimeline } from "@/components/visualizations/visualization-timeline";
+import { NumberStepper } from "@/components/widget/number-stepper";
 
 type ActiveNode = "code" | "processor" | "memory" | "console";
 
@@ -509,50 +511,32 @@ export function VariableMemoryLab() {
                             </div>
 
                             <div className="mt-5 space-y-4">
-                                <label className="block">
-                                    <span className="text-sm font-bold text-foreground">
-                                        Initial value
-                                    </span>
+                                <NumberStepper
+                                    label="Initial value"
+                                    value={initialValue}
+                                    min={-999}
+                                    max={999}
+                                    onChange={updateInitialValue}
+                                />
 
-                                    <input
-                                        type="number"
-                                        value={initialValue}
-                                        min={-999}
-                                        max={999}
-                                        onChange={(event) =>
-                                            updateInitialValue(
-                                                event.currentTarget.valueAsNumber,
-                                            )
-                                        }
-                                        className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-foreground"
-                                    />
-                                </label>
-
-                                <label className="block">
-                                    <span className="text-sm font-bold text-foreground">
-                                        Amount to add
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        value={increment}
-                                        min={-999}
-                                        max={999}
-                                        onChange={(event) =>
-                                            updateIncrement(
-                                                event.currentTarget.valueAsNumber,
-                                            )
-                                        }
-                                        className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-foreground"
-                                    />
-                                </label>
+                                <NumberStepper
+                                    label="Amount to add"
+                                    value={increment}
+                                    min={-999}
+                                    max={999}
+                                    onChange={updateIncrement}
+                                />
 
                                 <Button
                                     variant="secondary"
                                     onClick={resetScenario}
                                     className="w-full"
                                 >
-                                    Reset scenario values
+                                    <RotateCcw
+                                        aria-hidden="true"
+                                        className="size-4"
+                                    />
+                                    Reset values
                                 </Button>
                             </div>
                         </div>

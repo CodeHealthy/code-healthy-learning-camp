@@ -205,6 +205,17 @@ img {
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
+.number-stepper-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.number-stepper-input::-webkit-inner-spin-button,
+.number-stepper-input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
 @keyframes skeleton-shimmer {
   100% {
     transform: translateX(100%);
