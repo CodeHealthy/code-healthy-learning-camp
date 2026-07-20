@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 
 import { SkipLink } from "@/components/accessibility/skip-link";
 import { Header } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { themeInitializationScript } from "@/lib/theme-initializer";
 
 import "./globals.css";
 
@@ -18,35 +20,6 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
-const themeInitializationScript = `
-(function () {
-  try {
-    var storageKey = "codehealthy-theme";
-    var storedTheme = window.localStorage.getItem(storageKey);
-
-    var theme =
-      storedTheme === "light" || storedTheme === "dark"
-        ? storedTheme
-        : "system";
-
-    var isDark =
-      theme === "dark" ||
-      (
-        theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-      );
-
-    var root = document.documentElement;
-
-    root.dataset.theme = theme;
-    root.classList.toggle("dark", isDark);
-    root.style.colorScheme = isDark ? "dark" : "light";
-  } catch {
-    document.documentElement.dataset.theme = "system";
-  }
-})();
-`;
-
 export const metadata: Metadata = {
   applicationName: "CodeHealthyLearningCamp",
   title: {
@@ -58,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 interface RootLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
