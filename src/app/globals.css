@@ -1,12 +1,105 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  color-scheme: light;
+
+  --background: oklch(0.985 0.004 247);
+  --foreground: oklch(0.18 0.025 255);
+
+  --surface: oklch(1 0 0);
+  --surface-muted: oklch(0.965 0.008 247);
+  --surface-raised: oklch(0.995 0.002 247);
+
+  --border: oklch(0.895 0.012 247);
+  --muted-foreground: oklch(0.47 0.025 255);
+
+  --brand: oklch(0.57 0.2 255);
+  --brand-strong: oklch(0.49 0.21 258);
+  --brand-soft: oklch(0.94 0.04 250);
+
+  --accent: oklch(0.7 0.16 160);
+  --accent-strong: oklch(0.58 0.15 160);
+  --accent-soft: oklch(0.95 0.04 155);
+
+  --success: oklch(0.62 0.17 155);
+  --warning: oklch(0.72 0.16 75);
+  --danger: oklch(0.6 0.2 25);
+
+  --code-background: oklch(0.17 0.025 255);
+  --code-foreground: oklch(0.93 0.025 245);
+
+  --focus: oklch(0.64 0.18 250);
+  --selection: oklch(0.88 0.08 248);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.135 0.018 255);
+  --foreground: oklch(0.955 0.008 247);
+
+  --surface: oklch(0.18 0.022 255);
+  --surface-muted: oklch(0.22 0.022 255);
+  --surface-raised: oklch(0.245 0.025 255);
+
+  --border: oklch(0.31 0.025 255);
+  --muted-foreground: oklch(0.72 0.025 247);
+
+  --brand: oklch(0.71 0.15 250);
+  --brand-strong: oklch(0.78 0.13 245);
+  --brand-soft: oklch(0.25 0.055 255);
+
+  --accent: oklch(0.75 0.14 160);
+  --accent-strong: oklch(0.81 0.12 157);
+  --accent-soft: oklch(0.25 0.05 160);
+
+  --success: oklch(0.75 0.14 155);
+  --warning: oklch(0.8 0.14 78);
+  --danger: oklch(0.7 0.17 25);
+
+  --code-background: oklch(0.105 0.014 255);
+  --code-foreground: oklch(0.93 0.025 245);
+
+  --focus: oklch(0.75 0.14 245);
+  --selection: oklch(0.32 0.08 250);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-raised: var(--surface-raised);
+
+  --color-border: var(--border);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --color-code-background: var(--code-background);
+  --color-code-foreground: var(--code-foreground);
+
+  --color-focus: var(--focus);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
 }
 
 * {
   box-sizing: border-box;
+  border-color: var(--border);
 }
 
 html {
@@ -14,18 +107,56 @@ html {
 }
 
 body {
+  min-height: 100vh;
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+body {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 button,
-a {
-  outline-offset: 4px;
+a,
+input,
+textarea,
+select,
+summary {
+  outline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
 }
 
 ::selection {
-  background: #bfdbfe;
-  color: #172554;
+  background: var(--selection);
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

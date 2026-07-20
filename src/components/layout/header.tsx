@@ -1,49 +1,41 @@
 import Link from "next/link";
-import { GraduationCap } from "lucide-react";
 
-const navigationItems = [
-  { label: "Home", href: "/" },
-  { label: "Learning Paths", href: "/learn" },
-  { label: "Visualizations", href: "/visualizations" },
-  { label: "About", href: "/about" },
-];
+import { BrandMark } from "@/components/brand/brand-mark";
+import { DesktopNavigation } from "@/components/layout/desktop-navigation";
+import { MobileNavigation } from "@/components/layout/mobile-navigation";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 export function Header() {
   return (
-    <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface shadow-sm">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-3 font-bold text-slate-950"
+          aria-label="CodeHealthyLearningCamp homepage"
+          className="flex min-w-0 items-center gap-3 rounded-lg"
         >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-blue-600 text-white">
-            <GraduationCap aria-hidden="true" className="size-6" />
+          <BrandMark className="size-10 shrink-0" />
+
+          <span className="hidden truncate font-display text-base font-extrabold tracking-tight text-foreground sm:inline">
+            CodeHealthy
+            <span className="text-brand">LearningCamp</span>
           </span>
-
-          <span>CodeHealthyLearningCamp</span>
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden md:block">
-          <ul className="flex items-center gap-8">
-            {navigationItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <DesktopNavigation />
 
-        <Link
-          href="/learn"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-        >
-          Start learning
-        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
+
+          <Link
+            href="/learn"
+            className="hidden rounded-xl bg-brand px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-md md:inline-flex"
+          >
+            Start learning
+          </Link>
+
+          <MobileNavigation />
+        </div>
       </div>
     </header>
   );

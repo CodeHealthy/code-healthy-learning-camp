@@ -27,7 +27,7 @@ const takeaways = [
 
 export default function VariablesLessonPage() {
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-950">
+        <div className="min-h-screen bg-background text-foreground">
             <Header />
 
             <main>
