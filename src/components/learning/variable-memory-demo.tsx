@@ -58,6 +58,7 @@ const steps: VariableStep[] = [
 export function VariableMemoryDemo() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+
     const shouldReduceMotion = useReducedMotion();
 
     const step = steps[currentStep];
@@ -85,11 +86,15 @@ export function VariableMemoryDemo() {
 
     function goToPreviousStep() {
         setIsPlaying(false);
-        setCurrentStep((previousStep) => Math.max(previousStep - 1, 0));
+
+        setCurrentStep((previousStep) =>
+            Math.max(previousStep - 1, 0),
+        );
     }
 
     function goToNextStep() {
         setIsPlaying(false);
+
         setCurrentStep((previousStep) =>
             Math.min(previousStep + 1, steps.length - 1),
         );
@@ -116,9 +121,9 @@ export function VariableMemoryDemo() {
     return (
         <section
             aria-labelledby="variable-demo-title"
-            className="overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+            className="select-none overflow-hidden rounded-3xl border border-border bg-surface shadow-lg dark:shadow-2xl"
         >
-            <div className="border-b border-border px-6 py-5">
+            <header className="border-b border-border px-6 py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm font-bold text-brand">
@@ -127,24 +132,26 @@ export function VariableMemoryDemo() {
 
                         <h2
                             id="variable-demo-title"
-                            className="mt-1 font-display text-2xl font-extrabold"
+                            className="mt-1 font-display text-2xl font-extrabold text-foreground"
                         >
                             How a variable changes
                         </h2>
                     </div>
 
-                    <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-bold text-brand">
+                    <span className="w-fit rounded-full bg-brand-soft px-3 py-1 text-sm font-bold text-brand">
                         Step {currentStep + 1} of {steps.length}
                     </span>
                 </div>
-            </div>
+            </header>
 
             <div className="grid min-h-[440px] lg:grid-cols-2">
-                <div className="border-b border-white/10 bg-code-background p-6 text-code-foreground lg:border-r lg:border-b-0">
-                    <p className="text-sm font-semibold text-slate-400">Program code</p>
+                <div className="border-b border-code-border bg-code-background p-6 text-code-foreground lg:border-r lg:border-b-0">
+                    <p className="text-sm font-semibold text-code-muted">
+                        Program code
+                    </p>
 
-                    <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
-                        <p className="mb-4 font-mono text-sm text-slate-500">
+                    <div className="mt-6 rounded-2xl border border-code-border bg-code-surface p-5">
+                        <p className="mb-4 font-mono text-sm text-code-muted">
                             example.js
                         </p>
 
@@ -155,13 +162,18 @@ export function VariableMemoryDemo() {
                                     opacity: 0,
                                     y: shouldReduceMotion ? 0 : 12,
                                 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                }}
                                 exit={{
                                     opacity: 0,
                                     y: shouldReduceMotion ? 0 : -12,
                                 }}
-                                transition={{ duration: animationDuration }}
-                                className="block font-mono text-lg text-blue-300"
+                                transition={{
+                                    duration: animationDuration,
+                                }}
+                                className="select-text block font-mono text-lg text-sky-300"
                             >
                                 {step.code}
                             </motion.code>
@@ -170,21 +182,29 @@ export function VariableMemoryDemo() {
 
                     <div
                         aria-live="polite"
-                        className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5"
+                        className="mt-6 rounded-2xl border border-code-border bg-code-surface p-5"
                     >
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={step.title}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: animationDuration }}
+                                initial={{
+                                    opacity: 0,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                }}
+                                transition={{
+                                    duration: animationDuration,
+                                }}
                             >
-                                <h3 className="font-display text-lg font-bold text-white">
+                                <h3 className="font-display text-lg font-bold text-code-foreground">
                                     {step.title}
                                 </h3>
 
-                                <p className="mt-3 leading-7 text-slate-300">
+                                <p className="select-text mt-3 leading-7 text-code-muted">
                                     {step.description}
                                 </p>
                             </motion.div>
@@ -192,40 +212,49 @@ export function VariableMemoryDemo() {
                     </div>
                 </div>
 
-                <div className="relative flex min-h-[380px] flex-col items-center justify-center overflow-hidden bg-surface-muted p-8">
+                <div className="relative flex min-h-[380px] flex-col items-center justify-center overflow-hidden bg-surface-raised p-8">
                     <p className="absolute top-6 left-6 text-sm font-bold text-muted-foreground">
                         Simplified program memory
                     </p>
 
-                    {step.transferValue && (
-                        <motion.div
-                            key={`${currentStep}-${step.transferValue}`}
-                            initial={{
-                                opacity: 0,
-                                x: shouldReduceMotion ? 0 : -100,
-                            }}
-                            animate={{
-                                opacity: shouldReduceMotion ? 1 : [0, 1, 1, 0],
-                                x: shouldReduceMotion ? 0 : 100,
-                            }}
-                            transition={{
-                                duration: shouldReduceMotion ? 0 : 1.1,
-                                ease: "easeInOut",
-                            }}
-                            className="mb-6 rounded-xl bg-brand px-4 py-2 font-mono font-bold text-white shadow-lg"
-                        >
-                            {step.transferValue}
-                        </motion.div>
-                    )}
+                    <AnimatePresence mode="wait">
+                        {step.transferValue && (
+                            <motion.div
+                                key={`${currentStep}-${step.transferValue}`}
+                                initial={{
+                                    opacity: 0,
+                                    x: shouldReduceMotion ? 0 : -100,
+                                }}
+                                animate={{
+                                    opacity: shouldReduceMotion
+                                        ? 1
+                                        : [0, 1, 1, 0],
+                                    x: shouldReduceMotion ? 0 : 100,
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                }}
+                                transition={{
+                                    duration: shouldReduceMotion ? 0 : 1.1,
+                                    ease: "easeInOut",
+                                }}
+                                className="mb-6 rounded-xl bg-brand px-4 py-2 font-mono font-bold text-white shadow-lg"
+                            >
+                                {step.transferValue}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     <motion.div
                         layout
-                        className="w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+                        className="w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-surface shadow-lg"
                     >
                         <div className="border-b border-border bg-brand-soft px-5 py-4">
-                            <p className="text-sm font-bold text-brand">Variable name</p>
+                            <p className="text-sm font-bold text-brand">
+                                Variable name
+                            </p>
 
-                            <p className="mt-1 font-mono text-xl font-bold text-foreground">
+                            <p className="select-all mt-1 font-mono text-xl font-bold text-foreground">
                                 score
                             </p>
                         </div>
@@ -242,13 +271,18 @@ export function VariableMemoryDemo() {
                                         opacity: 0,
                                         scale: shouldReduceMotion ? 1 : 0.7,
                                     }}
-                                    animate={{ opacity: 1, scale: 1 }}
+                                    animate={{
+                                        opacity: 1,
+                                        scale: 1,
+                                    }}
                                     exit={{
                                         opacity: 0,
                                         scale: shouldReduceMotion ? 1 : 1.2,
                                     }}
-                                    transition={{ duration: animationDuration }}
-                                    className="mt-3 font-mono text-4xl font-extrabold text-foreground"
+                                    transition={{
+                                        duration: animationDuration,
+                                    }}
+                                    className="select-all mt-3 break-words font-mono text-4xl font-extrabold text-foreground"
                                 >
                                     {step.memoryValue}
                                 </motion.p>
@@ -258,31 +292,41 @@ export function VariableMemoryDemo() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4 border-t border-border bg-surface px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <footer className="flex flex-col gap-4 border-t border-border bg-surface px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2">
                     <button
                         type="button"
                         onClick={goToPreviousStep}
                         disabled={isFirstStep}
-                        className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground transition hover:border-brand hover:bg-brand-soft hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label="Previous step"
+                        title="Previous step"
+                        className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground transition hover:border-brand hover:bg-brand-soft hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        <ChevronLeft aria-hidden="true" className="size-5" />
+                        <ChevronLeft
+                            aria-hidden="true"
+                            className="size-5"
+                        />
                     </button>
 
                     <button
                         type="button"
                         onClick={togglePlayback}
-                        className="inline-flex min-w-28 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 font-bold text-white transition hover:bg-brand-strong"
+                        className="inline-flex min-w-28 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 font-bold text-white shadow-sm transition hover:bg-brand-strong hover:shadow-md"
                     >
                         {isPlaying ? (
                             <>
-                                <Pause aria-hidden="true" className="size-4" />
+                                <Pause
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
                                 Pause
                             </>
                         ) : (
                             <>
-                                <Play aria-hidden="true" className="size-4" />
+                                <Play
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
                                 {isLastStep ? "Play again" : "Play"}
                             </>
                         )}
@@ -292,10 +336,14 @@ export function VariableMemoryDemo() {
                         type="button"
                         onClick={goToNextStep}
                         disabled={isLastStep}
-                        className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground transition hover:border-brand hover:bg-brand-soft hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label="Next step"
+                        title="Next step"
+                        className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground transition hover:border-brand hover:bg-brand-soft hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        <ChevronRight aria-hidden="true" className="size-5" />
+                        <ChevronRight
+                            aria-hidden="true"
+                            className="size-5"
+                        />
                     </button>
                 </div>
 
@@ -304,10 +352,13 @@ export function VariableMemoryDemo() {
                     onClick={restartDemo}
                     className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-bold text-muted-foreground transition hover:bg-surface-muted hover:text-foreground"
                 >
-                    <RotateCcw aria-hidden="true" className="size-4" />
+                    <RotateCcw
+                        aria-hidden="true"
+                        className="size-4"
+                    />
                     Restart
                 </button>
-            </div>
+            </footer>
         </section>
     );
 }

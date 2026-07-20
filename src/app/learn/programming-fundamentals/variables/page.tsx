@@ -5,6 +5,8 @@ import {
     ArrowRight,
     CheckCircle2,
     Clock3,
+    ExternalLink,
+    FlaskConical,
 } from "lucide-react";
 
 import { MultipleChoiceQuiz } from "@/components/learning/multiple-choice-quiz";
@@ -12,7 +14,6 @@ import { VariableMemoryDemo } from "@/components/learning/variable-memory-demo";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { Callout } from "@/components/ui/callout";
 import { CodeBlock } from "@/components/ui/code-block";
-import { ExternalLink } from "lucide-react";
 import { ButtonLink } from "@/components/ui/buttons";
 
 export const metadata: Metadata = {
@@ -156,18 +157,25 @@ export default function VariablesLessonPage() {
                         </Callout>
                     </section>
 
-                    <VariableMemoryDemo />
+                    <section
+                        aria-label="Variable visualization"
+                        className="space-y-6"
+                    >
+                        <VariableMemoryDemo />
 
-                    <div className="flex justify-center">
-                        <ButtonLink
-                            href="/visualizations/programming-fundamentals/variable-memory"
-                            variant="secondary"
-                            size="lg"
-                        >
-                            Open the full Variable Memory Lab
-                            <ExternalLink aria-hidden="true" className="size-4" />
-                        </ButtonLink>
-                    </div>
+                        <div className="flex justify-center">
+                            <ButtonLink
+                                href="/visualizations/programming-fundamentals/variable-memory"
+                                variant="secondary"
+                                size="lg"
+                                className="border-brand/40 bg-brand-soft text-brand hover:bg-brand hover:text-white"
+                            >
+                                <FlaskConical aria-hidden="true" className="size-5" />
+                                Open the full Variable Memory Lab
+                                <ExternalLink aria-hidden="true" className="size-4" />
+                            </ButtonLink>
+                        </div>
+                    </section>
 
                     <section aria-labelledby="code-example">
                         <p className="font-bold text-brand">Put it together</p>

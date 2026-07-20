@@ -24,16 +24,29 @@ export const themeInitializationScript = `
     root.classList.toggle("dark", resolvedTheme === "dark");
     root.style.colorScheme = resolvedTheme;
 
-    var favicon = document.querySelector('link[rel="icon"]');
+    document
+      .querySelectorAll('link[rel~="icon"]')
+      .forEach(function (link) {
+        link.remove();
+      });
 
-    if (favicon) {
-      favicon.href =
-        resolvedTheme === "dark"
-          ? "/favicon-dark.svg"
-          : "/favicon-light.svg";
+    var favicon = document.createElement("link");
+    var iconPath =
+      resolvedTheme === "dark"
+        ? "/favicon-dark.svg"
+        : "/favicon-light.svg";
 
-      favicon.type = "image/svg+xml";
-    }
+    favicon.id = "theme-favicon";
+    favicon.rel = "icon";
+    favicon.type = "image/svg+xml";
+    favicon.sizes = "any";
+    favicon.href =
+      iconPath +
+      "?theme=" +
+      resolvedTheme +
+      "&v=2";
+
+    document.head.appendChild(favicon);
   } catch {
     document.documentElement.dataset.theme = "system";
   }

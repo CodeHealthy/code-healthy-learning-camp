@@ -76,10 +76,9 @@ function updateDocumentTheme(theme: Theme, persist: boolean) {
             window.localStorage.setItem(storageKey, theme);
         }
     } catch {
-        // The theme still works when local storage is unavailable.
+        // Theme still works when storage is unavailable.
     }
 }
-
 function changeTheme(theme: Theme) {
     updateDocumentTheme(theme, true);
     window.dispatchEvent(new Event(themeChangeEvent));
@@ -126,20 +125,24 @@ function getThemeSnapshot(): Theme {
 }
 
 function updateFavicon(resolvedTheme: "light" | "dark") {
-    const favicon = document.querySelector<HTMLLinkElement>(
-        'link[rel="icon"]',
-    );
-
-    if (!favicon) {
-        return;
-    }
-
-    favicon.href =
+    const iconPath =
         resolvedTheme === "dark"
             ? "/favicon-dark.svg"
             : "/favicon-light.svg";
 
+    document
+        .querySelectorAll<HTMLLinkElement>('link[rel~="icon"]')
+        .forEach((link) => link.remove());
+
+    const favicon = document.createElement("link");
+
+    favicon.id = "theme-favicon";
+    favicon.rel = "icon";
     favicon.type = "image/svg+xml";
+    favicon.sizes = "any";
+    favicon.href = `${iconPath}?theme=${resolvedTheme}&v=2`;
+
+    document.head.appendChild(favicon);
 }
 
 function getServerThemeSnapshot(): Theme {

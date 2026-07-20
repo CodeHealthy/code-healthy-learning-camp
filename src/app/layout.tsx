@@ -41,6 +41,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
+      <head>
+        <link
+          id="theme-favicon"
+          rel="icon"
+          type="image/svg+xml"
+          sizes="any"
+          href="/favicon-light.svg?v=2"
+        />
+      </head>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
       >
