@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -11,6 +12,12 @@ import {
 import { CourseCard } from "@/components/home/course-card";
 
 import { courses } from "@/data/courses";
+
+export const metadata: Metadata = {
+  title: "Interactive Software Development Learning",
+  description:
+    "Learn programming and software technologies through structured lessons, practical examples and interactive visualizations.",
+};
 
 const learningFeatures = [
   {

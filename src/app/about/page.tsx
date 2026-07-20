@@ -22,27 +22,6 @@ export const metadata: Metadata = {
         "Learn about Muhammad Yeshar, the developer behind CodeHealthyLearningCamp, and the purpose of the interactive learning platform.",
 };
 
-const learningPrinciples = [
-    {
-        title: "Simple explanations",
-        description:
-            "Complex topics begin with clear language before moving into technical details.",
-        icon: BookOpenCheck,
-    },
-    {
-        title: "Visual understanding",
-        description:
-            "Animations demonstrate how programming concepts and technologies work internally.",
-        icon: BrainCircuit,
-    },
-    {
-        title: "Practical learning",
-        description:
-            "Lessons connect concepts with focused code examples, exercises and real development scenarios.",
-        icon: Code2,
-    },
-];
-
 export default function AboutPage() {
     return (
         <main

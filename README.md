@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodeHealthyLearningCamp
 
-## Getting Started
+CodeHealthyLearningCamp is an interactive learning platform for students and
+developers. It combines structured lessons with standalone visualization labs
+to explain how programming concepts and software technologies work.
 
-First, run the development server:
+The learning approach is:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+> Explain simply, demonstrate visually, practise interactively, and verify
+> understanding.
+
+## Current learning experience
+
+The project currently includes:
+
+- A Programming Fundamentals learning path
+- A complete Variables and Values lesson
+- An embedded variable-memory demonstration
+- A standalone Variable Memory Lab with playback controls, editable values,
+  animation speed, a timeline, and fullscreen support
+- A reusable multiple-choice quiz
+- Light, dark, and system themes
+- Responsive navigation and accessible interaction patterns
+
+Planned learning paths include object-oriented programming, React, Spring Boot,
+Redis, Apache Kafka, SQL, and NoSQL.
+
+## Technology
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Motion for React
+- Lucide React icons
+- ESLint
+
+## Project structure
+
+```text
+src/
+├── app/                 Routes, layouts, and route-level UI
+├── components/
+│   ├── accessibility/   Accessibility helpers
+│   ├── brand/           Brand visuals
+│   ├── home/            Homepage components
+│   ├── layout/          Header, navigation, and footer
+│   ├── learning/        Interactive lesson components
+│   ├── navigation/      Shared navigation components
+│   ├── theme/           Theme controls
+│   ├── ui/              Reusable interface primitives
+│   └── visualizations/  Shared and concept-specific visualization components
+├── content/             Reserved for scalable learning content
+├── data/                Course and navigation data
+├── lib/                 Shared utilities
+└── types/               Shared TypeScript types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Learning paths and visualization labs are separate experiences. Lessons explain
+complete concepts, while labs demonstrate one process deeply and link back to
+the related lesson.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Install dependencies:
 
-## Learn More
+```powershell
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the development server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+## Validation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run both checks before publishing a development milestone:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```powershell
+npm run lint
+npm run build
+```
+
+New UI should also be checked in light, dark, and system themes at mobile,
+tablet, and desktop widths. Interactive experiences must remain usable with a
+keyboard and with reduced motion enabled.
