@@ -53,8 +53,8 @@ const lessons = [
     description:
       "Learn how functions organize reusable behaviour, inputs and outputs.",
     href: "/learn/programming-fundamentals/functions",
-    duration: "15 minutes",
-    available: false,
+    duration: "20 minutes",
+    available: true,
   },
 ];
 

@@ -82,8 +82,9 @@ export default function ProgrammingFundamentalsVisualizationsPage() {
 
                             <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
                                 Build a reliable mental model of how programs store
-                                values, choose branches and repeat instructions. Follow
-                                the labs in order or open the concept you need.
+                                values, choose branches, repeat instructions and run
+                                reusable functions. Follow the labs in order or open the
+                                concept you need.
                             </p>
 
                             <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-muted-foreground">

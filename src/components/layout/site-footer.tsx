@@ -25,6 +25,10 @@ const learningLinks = [
         label: "Loops and Repetition",
         href: "/learn/programming-fundamentals/loops",
     },
+    {
+        label: "Functions and Reusable Logic",
+        href: "/learn/programming-fundamentals/functions",
+    },
 ];
 
 const platformLinks = [
@@ -39,9 +43,9 @@ const platformLinks = [
 ];
 
 const upcomingTopics = [
-    "Functions",
     "Arrays",
     "Objects",
+    "Problem Solving",
 ];
 
 export function SiteFooter() {

@@ -35,7 +35,7 @@ export const visualizationCategories: VisualizationCategory[] = [
         id: "programming-fundamentals",
         title: "Programming Fundamentals",
         description:
-            "Build accurate mental models for memory, decisions and repetition before moving into larger systems.",
+            "Build accurate mental models for memory, decisions, repetition and reusable function calls before moving into larger systems.",
         icon: Braces,
         href: "/visualizations/programming-fundamentals",
         learningPathHref: "/learn/programming-fundamentals",
@@ -117,6 +117,17 @@ export const visualizations: Visualization[] = [
         available: true,
         href: "/visualizations/programming-fundamentals/loop-execution",
         lessonHref: "/learn/programming-fundamentals/loops",
+    },
+    {
+        id: "function-call",
+        title: "Function Call Flow",
+        description:
+            "Trace arguments into parameter bindings, local scope and a returned value before execution resumes at the call site.",
+        categoryId: "programming-fundamentals",
+        icon: Braces,
+        available: true,
+        href: "/visualizations/programming-fundamentals/function-call",
+        lessonHref: "/learn/programming-fundamentals/functions",
     },
     {
         id: "react-state",

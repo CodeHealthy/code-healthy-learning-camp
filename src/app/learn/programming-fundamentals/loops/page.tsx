@@ -358,9 +358,9 @@ export default function LoopsLessonPage() {
                         <Link href="/learn/programming-fundamentals/conditions" className="inline-flex items-center gap-2 rounded-lg font-bold text-muted-foreground transition hover:text-brand">
                             <ArrowLeft aria-hidden="true" className="size-4" />Conditions and decisions
                         </Link>
-                        <span className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-surface-muted px-5 py-3 font-bold text-muted-foreground">
-                            Functions coming soon<ArrowRight aria-hidden="true" className="size-4" />
-                        </span>
+                        <Link href="/learn/programming-fundamentals/functions" className="inline-flex items-center gap-2 rounded-lg font-bold text-brand transition hover:text-brand-strong">
+                            Functions and reusable logic<ArrowRight aria-hidden="true" className="size-4" />
+                        </Link>
                     </nav>
                 </div>
             </article>

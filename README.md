@@ -17,6 +17,7 @@ The project currently includes:
 - A complete Variables and Values lesson
 - A complete Conditions and Decisions lesson
 - A complete Loops and Repetition lesson
+- A complete Functions and Reusable Logic lesson
 - An embedded variable-memory demonstration
 - A standalone Variable Memory Lab with playback controls, editable values,
   animation speed, a timeline, and fullscreen support
@@ -24,6 +25,8 @@ The project currently includes:
   conditional branch selection
 - An interactive Loop Execution Timeline Lab covering initialization, checks,
   body execution, updates and stopping conditions
+- An interactive Function Call Flow Lab covering arguments, parameter binding,
+  local scope, return values and resumed caller execution
 - A reusable multiple-choice quiz
 - Light, dark, and system themes
 - Responsive navigation and accessible interaction patterns
