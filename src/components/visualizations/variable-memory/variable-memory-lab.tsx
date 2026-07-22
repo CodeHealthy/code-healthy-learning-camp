@@ -25,9 +25,18 @@ import { VisualizationControls } from "@/components/visualizations/visualization
 import type { PlaybackSpeed } from "@/components/visualizations/visualization-controls";
 import { VisualizationShell } from "@/components/visualizations/visualization-shell";
 import { VisualizationTimeline } from "@/components/visualizations/visualization-timeline";
+import { VisualizationViewSwitcher } from "@/components/visualizations/visualization-view-switcher";
 import { NumberStepper } from "@/components/widget/number-stepper";
+import { cn } from "@/lib/utils";
 
 type ActiveNode = "code" | "processor" | "memory" | "console";
+type FullscreenView = "code" | "flow" | "scenario";
+
+const fullscreenViews = [
+    { id: "code", label: "Code" },
+    { id: "flow", label: "Memory flow" },
+    { id: "scenario", label: "Scenario" },
+];
 
 interface VariableLabStep {
     id: string;
@@ -48,6 +57,7 @@ interface DiagramNodeProps {
     description: string;
     icon: typeof Code2;
     active: boolean;
+    compact?: boolean;
 }
 
 function DiagramNode({
@@ -55,6 +65,7 @@ function DiagramNode({
     description,
     icon: Icon,
     active,
+    compact = false,
 }: DiagramNodeProps) {
     return (
         <motion.div
@@ -62,27 +73,48 @@ function DiagramNode({
             animate={{
                 scale: active ? 1.03 : 1,
             }}
-            className={`rounded-2xl border p-4 transition ${active
+            className={cn(
+                "rounded-2xl border p-4 transition",
+                compact && "p-2 sm:p-3",
+                active
                     ? "border-brand bg-brand-soft"
-                    : "border-border bg-surface"
-                }`}
+                    : "border-border bg-surface",
+            )}
         >
-            <div className="flex items-center gap-3">
+            <div
+                className={cn(
+                    "flex items-center gap-3",
+                    compact && "flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2",
+                )}
+            >
                 <span
-                    className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${active
+                    className={cn(
+                        "flex size-10 shrink-0 items-center justify-center rounded-xl",
+                        compact && "size-8",
+                        active
                             ? "bg-brand text-white"
-                            : "bg-surface-muted text-muted-foreground"
-                        }`}
+                            : "bg-surface-muted text-muted-foreground",
+                    )}
                 >
                     <Icon aria-hidden="true" className="size-5" />
                 </span>
 
                 <div>
-                    <h3 className="font-display font-bold text-foreground">
+                    <h3
+                        className={cn(
+                            "font-display font-bold text-foreground",
+                            compact && "text-xs sm:text-sm",
+                        )}
+                    >
                         {title}
                     </h3>
 
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p
+                        className={cn(
+                            "mt-1 text-sm text-muted-foreground",
+                            compact && "line-clamp-2 text-[10px] leading-3 sm:text-xs sm:leading-4",
+                        )}
+                    >
                         {description}
                     </p>
                 </div>
@@ -196,6 +228,8 @@ export function VariableMemoryLab() {
     const [speed, setSpeed] = useState<PlaybackSpeed>(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [fullscreenError, setFullscreenError] = useState("");
+    const [fullscreenView, setFullscreenView] =
+        useState<FullscreenView>("flow");
 
     const steps = useMemo(
         () => createSteps(initialValue, increment),
@@ -204,6 +238,7 @@ export function VariableMemoryLab() {
 
     const step = steps[currentStep];
     const isLastStep = currentStep === steps.length - 1;
+    const isDefaultScenario = initialValue === 10 && increment === 5;
     const animationDuration = shouldReduceMotion ? 0 : 0.55;
 
     useEffect(() => {
@@ -232,9 +267,14 @@ export function VariableMemoryLab() {
 
     useEffect(() => {
         function handleFullscreenChange() {
-            setIsFullscreen(
-                document.fullscreenElement === labRef.current,
-            );
+            const isLabFullscreen =
+                document.fullscreenElement === labRef.current;
+
+            setIsFullscreen(isLabFullscreen);
+
+            if (isLabFullscreen) {
+                setFullscreenView("flow");
+            }
         }
 
         document.addEventListener(
@@ -334,17 +374,25 @@ export function VariableMemoryLab() {
     return (
         <div
             ref={labRef}
-            className="overflow-auto bg-background p-0 fullscreen:p-4"
+            data-visualization-root="variable-memory"
+            className={cn(
+                "max-w-full min-w-0 bg-background",
+                isFullscreen
+                    ? "h-dvh overflow-hidden p-2"
+                    : "overflow-auto p-0",
+            )}
         >
             <VisualizationShell
                 category="Programming Fundamentals Lab"
                 title="Variable Memory Flow"
                 description="Control the values and watch information move between program code, the processor, memory and console output."
+                isFullscreen={isFullscreen}
                 timeline={
                     <VisualizationTimeline
                         steps={steps}
                         currentStep={currentStep}
                         onStepSelect={selectStep}
+                        compact={isFullscreen}
                     />
                 }
                 controls={
@@ -363,10 +411,52 @@ export function VariableMemoryLab() {
                     />
                 }
             >
-                <div className="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.5fr)]">
-                    <div className="border-b border-border p-5 sm:p-7 lg:border-r lg:border-b-0">
-                        <div className="overflow-hidden rounded-2xl border border-border bg-code-background">
-                            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                <div
+                    className={cn(
+                        isFullscreen && "flex h-full min-h-0 flex-col",
+                    )}
+                >
+                    {isFullscreen && (
+                        <VisualizationViewSwitcher
+                            views={fullscreenViews}
+                            activeView={fullscreenView}
+                            onViewChange={(viewId) =>
+                                setFullscreenView(viewId as FullscreenView)
+                            }
+                            className="lg:hidden"
+                        />
+                    )}
+
+                <div
+                    className={cn(
+                        "grid lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.5fr)]",
+                        isFullscreen && "min-h-0 flex-1",
+                    )}
+                >
+                    <div
+                        className={cn(
+                            "border-b border-border p-5 sm:p-7 lg:border-r lg:border-b-0",
+                            isFullscreen &&
+                                "min-h-0 overflow-hidden border-b-0 p-3 sm:p-3",
+                            isFullscreen &&
+                                fullscreenView === "scenario" &&
+                                "hidden lg:block",
+                        )}
+                    >
+                        <div
+                            className={cn(
+                                "overflow-hidden rounded-2xl border border-border bg-code-background",
+                                isFullscreen &&
+                                    fullscreenView !== "code" &&
+                                    "hidden lg:block",
+                            )}
+                        >
+                            <div
+                                className={cn(
+                                    "flex items-center justify-between border-b border-white/10 px-4 py-3",
+                                    isFullscreen && "px-3 py-2",
+                                )}
+                            >
                                 <span className="font-mono text-xs text-slate-400">
                                     variable-flow.js
                                 </span>
@@ -389,14 +479,25 @@ export function VariableMemoryLab() {
                                         y: shouldReduceMotion ? 0 : -10,
                                     }}
                                     transition={{ duration: animationDuration }}
-                                    className="overflow-x-auto p-6 font-mono text-lg text-blue-300"
+                                    className={cn(
+                                        "overflow-x-auto p-6 font-mono text-lg text-blue-300",
+                                        isFullscreen && "p-3 text-base",
+                                    )}
                                 >
                                     <code>{step.code}</code>
                                 </motion.pre>
                             </AnimatePresence>
                         </div>
 
-                        <div className="mt-6 rounded-2xl border border-border bg-surface-muted p-5">
+                        <div
+                            className={cn(
+                                "mt-6 rounded-2xl border border-border bg-surface-muted p-5",
+                                isFullscreen && "mt-3 p-3",
+                                isFullscreen &&
+                                    fullscreenView !== "flow" &&
+                                    "hidden lg:block",
+                            )}
+                        >
                             <div className="flex items-center justify-between gap-4">
                                 <span className="font-bold text-foreground">
                                     {step.flowFrom}
@@ -407,7 +508,12 @@ export function VariableMemoryLab() {
                                 </span>
                             </div>
 
-                            <div className="relative mt-5 h-16 overflow-hidden rounded-2xl border border-border bg-surface">
+                            <div
+                                className={cn(
+                                    "relative mt-5 h-16 overflow-hidden rounded-2xl border border-border bg-surface",
+                                    isFullscreen && "mt-3 h-12",
+                                )}
+                            >
                                 <div
                                     aria-hidden="true"
                                     className="absolute top-1/2 right-[8%] left-[8%] h-0.5 -translate-y-1/2 bg-border"
@@ -441,12 +547,21 @@ export function VariableMemoryLab() {
                             </div>
                         </div>
 
-                        <div className="mt-6 grid gap-4 md:grid-cols-3">
+                        <div
+                            className={cn(
+                                "mt-6 grid gap-4 md:grid-cols-3",
+                                isFullscreen && "mt-3 grid-cols-3 gap-2",
+                                isFullscreen &&
+                                    fullscreenView !== "flow" &&
+                                    "hidden lg:grid",
+                            )}
+                        >
                             <DiagramNode
                                 title="Processor"
                                 description={step.processorValue}
                                 icon={Calculator}
                                 active={step.activeNode === "processor"}
+                                compact={isFullscreen}
                             />
 
                             <DiagramNode
@@ -454,6 +569,7 @@ export function VariableMemoryLab() {
                                 description={`score = ${step.memoryValue}`}
                                 icon={Database}
                                 active={step.activeNode === "memory"}
+                                compact={isFullscreen}
                             />
 
                             <DiagramNode
@@ -461,23 +577,61 @@ export function VariableMemoryLab() {
                                 description={step.consoleValue}
                                 icon={Monitor}
                                 active={step.activeNode === "console"}
+                                compact={isFullscreen}
                             />
                         </div>
                     </div>
 
-                    <aside className="bg-surface-muted p-5 sm:p-7">
-                        <div className="rounded-2xl border border-border bg-surface p-5">
-                            <div className="flex items-center gap-3">
-                                <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                    <aside
+                        className={cn(
+                            "bg-surface-muted p-5 sm:p-7",
+                            isFullscreen &&
+                                "min-h-0 overflow-hidden p-3 sm:p-3",
+                            isFullscreen &&
+                                fullscreenView !== "scenario" &&
+                                "hidden lg:block",
+                            isFullscreen &&
+                                fullscreenView === "scenario" &&
+                                "[@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-[0.8fr_1.6fr_0.8fr] [@media(max-height:500px)]:items-start [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:p-2",
+                        )}
+                    >
+                        <div
+                            className={cn(
+                                "rounded-2xl border border-border bg-surface p-5",
+                                isFullscreen && "p-2.5",
+                            )}
+                        >
+                            <div
+                                className={cn(
+                                    "flex items-center gap-3",
+                                    isFullscreen && "gap-1.5",
+                                )}
+                            >
+                                <span
+                                    className={cn(
+                                        "flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand",
+                                        isFullscreen && "size-7",
+                                    )}
+                                >
                                     <Code2 aria-hidden="true" className="size-5" />
                                 </span>
 
                                 <div>
-                                    <p className="text-sm font-bold text-brand">
+                                    <p
+                                        className={cn(
+                                            "text-sm font-bold text-brand",
+                                            isFullscreen && "sr-only",
+                                        )}
+                                    >
                                         Current step
                                     </p>
 
-                                    <h3 className="font-display text-xl font-extrabold">
+                                    <h3
+                                        className={cn(
+                                            "font-display text-xl font-extrabold",
+                                            isFullscreen && "text-sm",
+                                        )}
+                                    >
                                         {step.title}
                                     </h3>
                                 </div>
@@ -491,14 +645,24 @@ export function VariableMemoryLab() {
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: animationDuration }}
                                     aria-live="polite"
-                                    className="mt-5 leading-7 text-muted-foreground"
+                                    className={cn(
+                                        "mt-5 leading-7 text-muted-foreground",
+                                        isFullscreen &&
+                                            "mt-1 line-clamp-2 text-[11px] leading-4",
+                                    )}
                                 >
                                     {step.description}
                                 </motion.p>
                             </AnimatePresence>
                         </div>
 
-                        <div className="mt-5 rounded-2xl border border-border bg-surface p-5">
+                        <div
+                            className={cn(
+                                "mt-5 rounded-2xl border border-border bg-surface p-5",
+                                isFullscreen &&
+                                    "mt-3 p-3 [@media(max-height:500px)]:mt-0",
+                            )}
+                        >
                             <div className="flex items-center gap-2">
                                 <Settings2
                                     aria-hidden="true"
@@ -510,7 +674,13 @@ export function VariableMemoryLab() {
                                 </h3>
                             </div>
 
-                            <div className="mt-5 space-y-4">
+                            <div
+                                className={cn(
+                                    "mt-5 space-y-4",
+                                    isFullscreen &&
+                                        "mt-3 grid grid-cols-2 gap-2 space-y-0",
+                                )}
+                            >
                                 <NumberStepper
                                     label="Initial value"
                                     value={initialValue}
@@ -530,35 +700,57 @@ export function VariableMemoryLab() {
                                 <Button
                                     variant="secondary"
                                     onClick={resetScenario}
-                                    className="w-full"
+                                    disabled={isDefaultScenario}
+                                    className={cn(
+                                        "w-full",
+                                        isFullscreen && "col-span-2",
+                                    )}
                                 >
                                     <RotateCcw
                                         aria-hidden="true"
                                         className="size-4"
                                     />
-                                    Reset values
+                                    {isFullscreen ? "Reset" : "Reset values"}
                                 </Button>
                             </div>
                         </div>
 
-                        <div className="mt-5 rounded-2xl border border-brand/40 bg-brand-soft p-5">
+                        <div
+                            className={cn(
+                                "mt-5 rounded-2xl border border-brand/40 bg-brand-soft p-5",
+                                isFullscreen &&
+                                    "mt-3 p-3 [@media(max-height:500px)]:mt-0",
+                            )}
+                        >
                             <p className="text-sm font-bold text-brand">
                                 Live result
                             </p>
 
-                            <p className="mt-2 font-mono text-2xl font-extrabold text-foreground">
+                            <p
+                                className={cn(
+                                    "mt-2 font-mono text-2xl font-extrabold text-foreground",
+                                    isFullscreen && "mt-1 text-lg",
+                                )}
+                            >
                                 {initialValue} + {increment} ={" "}
                                 {initialValue + increment}
                             </p>
                         </div>
 
-                        <p
-                            aria-live="polite"
-                            className="mt-4 text-sm text-danger"
-                        >
-                            {fullscreenError}
-                        </p>
+                        {fullscreenError && (
+                            <p
+                                aria-live="polite"
+                                className={cn(
+                                    "mt-4 text-sm text-danger",
+                                    isFullscreen &&
+                                        "[@media(max-height:500px)]:col-span-3",
+                                )}
+                            >
+                                {fullscreenError}
+                            </p>
+                        )}
                     </aside>
+                </div>
                 </div>
             </VisualizationShell>
         </div>

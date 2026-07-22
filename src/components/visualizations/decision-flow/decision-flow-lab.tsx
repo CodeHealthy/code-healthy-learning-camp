@@ -22,8 +22,10 @@ import { VisualizationControls } from "@/components/visualizations/visualization
 import type { PlaybackSpeed } from "@/components/visualizations/visualization-controls";
 import { VisualizationShell } from "@/components/visualizations/visualization-shell";
 import { VisualizationTimeline } from "@/components/visualizations/visualization-timeline";
+import { VisualizationViewSwitcher } from "@/components/visualizations/visualization-view-switcher";
 import { BinaryChoice } from "@/components/widget/binary-choice";
 import { NumberStepper } from "@/components/widget/number-stepper";
+import { cn } from "@/lib/utils";
 
 type DecisionOutcome =
     | "approved"
@@ -37,6 +39,19 @@ type ActiveArea =
     | "combined-result"
     | "branch"
     | "output";
+
+type FullscreenView =
+    | "code"
+    | "evaluation"
+    | "branches"
+    | "scenario";
+
+const fullscreenViews = [
+    { id: "code", label: "Code" },
+    { id: "evaluation", label: "Evaluate" },
+    { id: "branches", label: "Branches" },
+    { id: "scenario", label: "Scenario" },
+];
 
 interface DecisionFlowStep {
     id: string;
@@ -226,6 +241,8 @@ export function DecisionFlowLab() {
     const [speed, setSpeed] = useState<PlaybackSpeed>(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [fullscreenError, setFullscreenError] = useState("");
+    const [fullscreenView, setFullscreenView] =
+        useState<FullscreenView>("evaluation");
 
     const ageMeetsRequirement = age >= minimumAge;
     const isApproved = ageMeetsRequirement && hasTicket;
@@ -270,9 +287,14 @@ export function DecisionFlowLab() {
 
     useEffect(() => {
         function handleFullscreenChange() {
-            setIsFullscreen(
-                document.fullscreenElement === labRef.current,
-            );
+            const isLabFullscreen =
+                document.fullscreenElement === labRef.current;
+
+            setIsFullscreen(isLabFullscreen);
+
+            if (isLabFullscreen) {
+                setFullscreenView("evaluation");
+            }
         }
 
         document.addEventListener(
@@ -386,17 +408,25 @@ export function DecisionFlowLab() {
     return (
         <div
             ref={labRef}
-            className="max-w-full min-w-0 overflow-auto bg-background p-0 fullscreen:p-4"
+            data-visualization-root="decision-flow"
+            className={cn(
+                "max-w-full min-w-0 bg-background",
+                isFullscreen
+                    ? "h-dvh overflow-hidden p-2"
+                    : "overflow-auto p-0",
+            )}
         >
             <VisualizationShell
                 category="Programming Fundamentals Lab"
                 title="Decision Flow"
                 description="Change the scenario, follow each Boolean evaluation and see exactly why JavaScript selects one branch while skipping the others."
+                isFullscreen={isFullscreen}
                 timeline={
                     <VisualizationTimeline
                         steps={steps}
                         currentStep={currentStep}
                         onStepSelect={selectStep}
+                        compact={isFullscreen}
                     />
                 }
                 controls={
@@ -415,10 +445,55 @@ export function DecisionFlowLab() {
                     />
                 }
             >
-                <div className="grid min-w-0 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.65fr)]">
-                    <div className="order-last min-w-0 border-b border-border p-5 sm:p-7 lg:order-first lg:border-r lg:border-b-0">
-                        <div className="max-w-full min-w-0 overflow-hidden rounded-2xl border border-code-border bg-code-background text-code-foreground">
-                            <div className="flex items-center justify-between gap-4 border-b border-code-border px-4 py-3">
+                <div
+                    className={cn(
+                        isFullscreen && "flex h-full min-h-0 flex-col",
+                    )}
+                >
+                    {isFullscreen && (
+                        <VisualizationViewSwitcher
+                            views={fullscreenViews}
+                            activeView={fullscreenView}
+                            onViewChange={(viewId) =>
+                                setFullscreenView(viewId as FullscreenView)
+                            }
+                            className="lg:hidden"
+                        />
+                    )}
+
+                <div
+                    className={cn(
+                        "grid min-w-0 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.65fr)]",
+                        isFullscreen && "min-h-0 flex-1",
+                    )}
+                >
+                    <div
+                        className={cn(
+                            "order-last min-w-0 border-b border-border p-5 sm:p-7 lg:order-first lg:border-r lg:border-b-0",
+                            isFullscreen &&
+                                "h-full min-h-0 overflow-hidden border-b-0 p-2 sm:p-2 lg:grid lg:grid-cols-[minmax(320px,0.85fr)_minmax(0,1.15fr)] lg:grid-rows-2 lg:gap-3 lg:p-3",
+                            isFullscreen &&
+                                fullscreenView === "scenario" &&
+                                "hidden lg:grid",
+                        )}
+                    >
+                        <div
+                            className={cn(
+                                "max-w-full min-w-0 overflow-hidden rounded-2xl border border-code-border bg-code-background text-code-foreground",
+                                isFullscreen &&
+                                    "flex h-full min-h-0 flex-col lg:row-span-2",
+                                isFullscreen &&
+                                    fullscreenView !== "code" &&
+                                    "hidden lg:flex",
+                            )}
+                        >
+                            <div
+                                className={cn(
+                                    "flex items-center justify-between gap-4 border-b border-code-border px-4 py-3",
+                                    isFullscreen &&
+                                        "shrink-0 px-3 py-2 [@media(max-height:500px)]:hidden",
+                                )}
+                            >
                                 <span className="font-mono text-xs text-code-muted">
                                     decision-flow.js
                                 </span>
@@ -428,7 +503,13 @@ export function DecisionFlowLab() {
                                 </span>
                             </div>
 
-                            <div className="overflow-x-auto py-3 font-mono text-sm leading-7">
+                            <div
+                                className={cn(
+                                    "overflow-x-auto py-3 font-mono text-sm leading-7",
+                                    isFullscreen &&
+                                        "min-h-0 flex-1 overflow-y-hidden py-2 text-xs leading-6 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[10px] [@media(max-height:500px)]:leading-4",
+                                )}
+                            >
                                 {codeLines.map((codeLine) => {
                                     const isActive =
                                         step.activeLines.includes(
@@ -458,16 +539,31 @@ export function DecisionFlowLab() {
 
                         <section
                             aria-labelledby="expression-title"
-                            className="mt-6 rounded-2xl border border-border bg-surface-muted p-5"
+                            className={cn(
+                                "mt-6 rounded-2xl border border-border bg-surface-muted p-5",
+                                isFullscreen &&
+                                    "mt-0 flex min-h-0 flex-col justify-center overflow-hidden p-3 [@media(max-height:500px)]:p-2",
+                                isFullscreen &&
+                                    fullscreenView !== "evaluation" &&
+                                    "hidden lg:flex",
+                            )}
                         >
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div>
-                                    <p className="text-sm font-bold text-brand">
+                                    <p
+                                        className={cn(
+                                            "text-sm font-bold text-brand",
+                                            isFullscreen && "text-xs",
+                                        )}
+                                    >
                                         Expression evaluation
                                     </p>
                                     <h3
                                         id="expression-title"
-                                        className="mt-1 font-display text-xl font-extrabold"
+                                        className={cn(
+                                            "mt-1 font-display text-xl font-extrabold",
+                                            isFullscreen && "text-base",
+                                        )}
                                     >
                                         JavaScript evaluates && left to right
                                     </h3>
@@ -486,7 +582,13 @@ export function DecisionFlowLab() {
                                 )}
                             </div>
 
-                            <div className="mt-5 grid items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]">
+                            <div
+                                className={cn(
+                                    "mt-5 grid items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]",
+                                    isFullscreen &&
+                                        "mt-3 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] gap-1 sm:gap-2",
+                                )}
+                            >
                                 <motion.div
                                     animate={{
                                         scale:
@@ -497,18 +599,32 @@ export function DecisionFlowLab() {
                                     transition={{
                                         duration: animationDuration,
                                     }}
-                                    className={`rounded-xl border p-4 text-center transition ${expressionCardClasses(
-                                        step.activeArea === "age-check",
-                                        hasEvaluatedAge,
-                                    )}`}
+                                    className={cn(
+                                        "rounded-xl border p-4 text-center transition",
+                                        isFullscreen && "p-2",
+                                        expressionCardClasses(
+                                            step.activeArea === "age-check",
+                                            hasEvaluatedAge,
+                                        ),
+                                    )}
                                 >
                                     <p className="text-xs font-bold text-muted-foreground">
                                         Left operand
                                     </p>
-                                    <p className="mt-2 font-mono font-bold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 font-mono font-bold",
+                                            isFullscreen && "mt-1 text-sm",
+                                        )}
+                                    >
                                         {age} &gt;= {minimumAge}
                                     </p>
-                                    <p className="mt-2 text-sm font-extrabold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 text-sm font-extrabold",
+                                            isFullscreen && "mt-1 text-xs",
+                                        )}
+                                    >
                                         {hasEvaluatedAge
                                             ? String(ageMeetsRequirement)
                                             : "Waiting"}
@@ -529,25 +645,37 @@ export function DecisionFlowLab() {
                                     transition={{
                                         duration: animationDuration,
                                     }}
-                                    className={`rounded-xl border p-4 text-center transition ${
+                                    className={cn(
+                                        "rounded-xl border p-4 text-center transition",
+                                        isFullscreen && "p-2",
                                         hasEvaluatedTicket &&
-                                        !ageMeetsRequirement &&
-                                        step.activeArea !== "ticket-check"
+                                            !ageMeetsRequirement &&
+                                            step.activeArea !== "ticket-check"
                                             ? "border-warning/40 bg-warning-soft"
                                             : expressionCardClasses(
                                                   step.activeArea ===
                                                       "ticket-check",
                                                   hasEvaluatedTicket,
-                                              )
-                                    }`}
+                                              ),
+                                    )}
                                 >
                                     <p className="text-xs font-bold text-muted-foreground">
                                         Right operand
                                     </p>
-                                    <p className="mt-2 font-mono font-bold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 font-mono font-bold",
+                                            isFullscreen && "mt-1 text-sm",
+                                        )}
+                                    >
                                         hasTicket
                                     </p>
-                                    <p className="mt-2 text-sm font-extrabold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 text-sm font-extrabold",
+                                            isFullscreen && "mt-1 text-xs",
+                                        )}
+                                    >
                                         {!hasEvaluatedTicket
                                             ? "Waiting"
                                             : ageMeetsRequirement
@@ -568,19 +696,33 @@ export function DecisionFlowLab() {
                                                 ? 1.03
                                                 : 1,
                                     }}
-                                    className={`rounded-xl border p-4 text-center transition ${expressionCardClasses(
-                                        step.activeArea ===
-                                            "combined-result",
-                                        hasCombinedResult,
-                                    )}`}
+                                    className={cn(
+                                        "rounded-xl border p-4 text-center transition",
+                                        isFullscreen && "p-2",
+                                        expressionCardClasses(
+                                            step.activeArea ===
+                                                "combined-result",
+                                            hasCombinedResult,
+                                        ),
+                                    )}
                                 >
                                     <p className="text-xs font-bold text-muted-foreground">
                                         If condition
                                     </p>
-                                    <p className="mt-2 font-mono font-bold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 font-mono font-bold",
+                                            isFullscreen && "mt-1 text-sm",
+                                        )}
+                                    >
                                         result
                                     </p>
-                                    <p className="mt-2 text-sm font-extrabold">
+                                    <p
+                                        className={cn(
+                                            "mt-2 text-sm font-extrabold",
+                                            isFullscreen && "mt-1 text-xs",
+                                        )}
+                                    >
                                         {hasCombinedResult
                                             ? String(isApproved)
                                             : "Waiting"}
@@ -590,12 +732,24 @@ export function DecisionFlowLab() {
 
                             {hasEvaluatedTicket &&
                                 !ageMeetsRequirement && (
-                                    <div className="mt-4 flex gap-3 rounded-xl border border-warning/40 bg-warning-soft p-4">
+                                    <div
+                                        className={cn(
+                                            "mt-4 flex gap-3 rounded-xl border border-warning/40 bg-warning-soft p-4",
+                                            isFullscreen &&
+                                                "mt-2 gap-2 p-2",
+                                        )}
+                                    >
                                         <CircleAlert
                                             aria-hidden="true"
                                             className="mt-0.5 size-5 shrink-0 text-warning"
                                         />
-                                        <p className="text-sm leading-6 text-muted-foreground">
+                                        <p
+                                            className={cn(
+                                                "text-sm leading-6 text-muted-foreground",
+                                                isFullscreen &&
+                                                    "text-xs leading-4",
+                                            )}
+                                        >
                                             <strong className="text-foreground">
                                                 Short-circuit:
                                             </strong>{" "}
@@ -610,22 +764,47 @@ export function DecisionFlowLab() {
 
                         <section
                             aria-labelledby="branch-title"
-                            className="mt-6 rounded-2xl border border-border bg-surface-muted p-5"
+                            className={cn(
+                                "mt-6 rounded-2xl border border-border bg-surface-muted p-5",
+                                isFullscreen &&
+                                    "mt-0 flex min-h-0 flex-col justify-center overflow-hidden p-3 [@media(max-height:500px)]:p-2",
+                                isFullscreen &&
+                                    fullscreenView !== "branches" &&
+                                    "hidden lg:flex",
+                            )}
                         >
-                            <div className="flex items-center gap-3">
-                                <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                            <div
+                                className={cn(
+                                    "flex items-center gap-3",
+                                    isFullscreen && "gap-2",
+                                )}
+                            >
+                                <span
+                                    className={cn(
+                                        "flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand",
+                                        isFullscreen && "size-8",
+                                    )}
+                                >
                                     <GitBranch
                                         aria-hidden="true"
                                         className="size-5"
                                     />
                                 </span>
                                 <div>
-                                    <p className="text-sm font-bold text-brand">
+                                    <p
+                                        className={cn(
+                                            "text-sm font-bold text-brand",
+                                            isFullscreen && "text-xs",
+                                        )}
+                                    >
                                         Branch selection
                                     </p>
                                     <h3
                                         id="branch-title"
-                                        className="font-display text-xl font-extrabold"
+                                        className={cn(
+                                            "font-display text-xl font-extrabold",
+                                            isFullscreen && "text-base",
+                                        )}
                                     >
                                         Exactly one path runs
                                     </h3>
@@ -642,19 +821,31 @@ export function DecisionFlowLab() {
                                 transition={{
                                     duration: animationDuration,
                                 }}
-                                className={`mx-auto mt-5 max-w-md rounded-2xl border p-4 text-center transition ${
+                                className={cn(
+                                    "mx-auto mt-5 max-w-md rounded-2xl border p-4 text-center transition",
+                                    isFullscreen && "mt-3 p-2",
                                     step.activeArea === "branch"
                                         ? "border-brand bg-brand-soft shadow-md"
-                                        : "border-border bg-surface"
-                                }`}
+                                        : "border-border bg-surface",
+                                )}
                             >
                                 <p className="text-xs font-bold text-muted-foreground">
                                     First decision
                                 </p>
-                                <code className="mt-2 block font-mono text-sm font-bold text-foreground">
+                                <code
+                                    className={cn(
+                                        "mt-2 block font-mono text-sm font-bold text-foreground",
+                                        isFullscreen && "mt-1 text-xs",
+                                    )}
+                                >
                                     age &gt;= minimumAge &amp;&amp; hasTicket
                                 </code>
-                                <p className="mt-2 text-sm font-extrabold text-brand">
+                                <p
+                                    className={cn(
+                                        "mt-2 text-sm font-extrabold text-brand",
+                                        isFullscreen && "mt-1 text-xs",
+                                    )}
+                                >
                                     {hasCombinedResult
                                         ? String(isApproved)
                                         : "Waiting"}
@@ -663,10 +854,18 @@ export function DecisionFlowLab() {
 
                             <div
                                 aria-hidden="true"
-                                className="mx-auto h-6 w-px bg-border"
+                                className={cn(
+                                    "mx-auto h-6 w-px bg-border",
+                                    isFullscreen && "h-3",
+                                )}
                             />
 
-                            <div className="grid gap-3 md:grid-cols-3">
+                            <div
+                                className={cn(
+                                    "grid gap-3 md:grid-cols-3",
+                                    isFullscreen && "grid-cols-3 gap-1 sm:gap-2",
+                                )}
+                            >
                                 {(
                                     [
                                         {
@@ -701,9 +900,11 @@ export function DecisionFlowLab() {
                                             transition={{
                                                 duration: animationDuration,
                                             }}
-                                            className={`rounded-2xl border p-4 transition ${outcomeCardClasses(
-                                                branch.id,
-                                            )}`}
+                                            className={cn(
+                                                "rounded-2xl border p-4 transition",
+                                                isFullscreen && "p-2.5",
+                                                outcomeCardClasses(branch.id),
+                                            )}
                                         >
                                             <div className="flex items-center justify-between gap-2">
                                                 <span className="text-xs font-bold">
@@ -721,7 +922,13 @@ export function DecisionFlowLab() {
                                                     />
                                                 )}
                                             </div>
-                                            <p className="mt-3 font-bold text-foreground">
+                                            <p
+                                                className={cn(
+                                                    "mt-3 font-bold text-foreground",
+                                                    isFullscreen &&
+                                                        "mt-1 text-sm",
+                                                )}
+                                            >
                                                 {branch.title}
                                             </p>
                                         </motion.div>
@@ -731,20 +938,57 @@ export function DecisionFlowLab() {
                         </section>
                     </div>
 
-                    <aside className="order-first min-w-0 border-b border-border bg-surface-muted p-5 sm:p-7 lg:order-last lg:border-b-0">
-                        <div className="rounded-2xl border border-border bg-surface p-5">
-                            <div className="flex items-center gap-3">
-                                <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                    <aside
+                        className={cn(
+                            "order-first min-w-0 border-b border-border bg-surface-muted p-5 sm:p-7 lg:order-last lg:border-b-0",
+                            isFullscreen &&
+                                "h-full min-h-0 overflow-hidden border-b-0 p-3 sm:p-3",
+                            isFullscreen &&
+                                fullscreenView !== "scenario" &&
+                                "hidden lg:block",
+                            isFullscreen &&
+                                fullscreenView === "scenario" &&
+                                "[@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-[0.8fr_1.6fr_0.8fr] [@media(max-height:500px)]:items-start [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:p-2",
+                        )}
+                    >
+                        <div
+                            className={cn(
+                                "rounded-2xl border border-border bg-surface p-5",
+                                isFullscreen && "p-2.5",
+                            )}
+                        >
+                            <div
+                                className={cn(
+                                    "flex items-center gap-3",
+                                    isFullscreen && "gap-1.5",
+                                )}
+                            >
+                                <span
+                                    className={cn(
+                                        "flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand",
+                                        isFullscreen && "size-7",
+                                    )}
+                                >
                                     <Code2
                                         aria-hidden="true"
                                         className="size-5"
                                     />
                                 </span>
                                 <div>
-                                    <p className="text-sm font-bold text-brand">
+                                    <p
+                                        className={cn(
+                                            "text-sm font-bold text-brand",
+                                            isFullscreen && "sr-only",
+                                        )}
+                                    >
                                         Current step
                                     </p>
-                                    <h3 className="font-display text-xl font-extrabold">
+                                    <h3
+                                        className={cn(
+                                            "font-display text-xl font-extrabold",
+                                            isFullscreen && "text-sm",
+                                        )}
+                                    >
                                         {step.title}
                                     </h3>
                                 </div>
@@ -758,17 +1002,29 @@ export function DecisionFlowLab() {
                                     duration: animationDuration,
                                 }}
                                 aria-live="polite"
-                                className="mt-5 leading-7 text-muted-foreground"
+                                className={cn(
+                                    "mt-5 leading-7 text-muted-foreground",
+                                    isFullscreen &&
+                                        "mt-1 line-clamp-2 text-[11px] leading-4",
+                                )}
                             >
                                 {step.description}
                             </motion.p>
 
-                            <code className="mt-4 block overflow-x-auto rounded-xl bg-code-background p-3 font-mono text-sm text-code-foreground">
-                                {step.code}
-                            </code>
+                            {!isFullscreen && (
+                                <code className="mt-4 block overflow-x-auto rounded-xl bg-code-background p-3 font-mono text-sm text-code-foreground">
+                                    {step.code}
+                                </code>
+                            )}
                         </div>
 
-                        <div className="mt-5 rounded-2xl border border-border bg-surface p-5">
+                        <div
+                            className={cn(
+                                "mt-5 rounded-2xl border border-border bg-surface p-5",
+                                isFullscreen &&
+                                    "mt-3 p-3 [@media(max-height:500px)]:mt-0",
+                            )}
+                        >
                             <div className="flex items-center gap-2">
                                 <Settings2
                                     aria-hidden="true"
@@ -779,7 +1035,13 @@ export function DecisionFlowLab() {
                                 </h3>
                             </div>
 
-                            <div className="mt-5 space-y-4">
+                            <div
+                                className={cn(
+                                    "mt-5 space-y-4",
+                                    isFullscreen &&
+                                        "mt-3 grid grid-cols-2 gap-2 space-y-0",
+                                )}
+                            >
                                 <NumberStepper
                                     label="Visitor age"
                                     value={age}
@@ -800,51 +1062,75 @@ export function DecisionFlowLab() {
                                     label="Valid ticket"
                                     value={hasTicket}
                                     onChange={updateTicket}
-                                    trueLabel="Available"
-                                    falseLabel="Missing"
+                                    trueLabel={
+                                        isFullscreen ? "Yes" : "Available"
+                                    }
+                                    falseLabel={
+                                        isFullscreen ? "No" : "Missing"
+                                    }
                                 />
 
                                 <Button
                                     variant="secondary"
                                     onClick={resetScenario}
                                     disabled={isDefaultScenario}
-                                    className="w-full"
+                                    className={cn(
+                                        "w-full",
+                                        isFullscreen && "self-end",
+                                    )}
                                 >
                                     <RotateCcw
                                         aria-hidden="true"
                                         className="size-4"
                                     />
-                                    Reset values
+                                    {isFullscreen ? "Reset" : "Reset values"}
                                 </Button>
                             </div>
                         </div>
 
                         <div
                             aria-live="polite"
-                            className={`mt-5 rounded-2xl border p-5 ${
+                            className={cn(
+                                "mt-5 rounded-2xl border p-5",
+                                isFullscreen &&
+                                    "mt-3 p-3 [@media(max-height:500px)]:mt-0",
                                 outcome === "approved"
                                     ? "border-success/40 bg-success-soft"
-                                    : "border-warning/40 bg-warning-soft"
-                            }`}
+                                    : "border-warning/40 bg-warning-soft",
+                            )}
                         >
                             <p className="text-sm font-bold text-muted-foreground">
                                 Live outcome
                             </p>
-                            <p className="mt-2 font-display text-xl font-extrabold text-foreground">
+                            <p
+                                className={cn(
+                                    "mt-2 font-display text-xl font-extrabold text-foreground",
+                                    isFullscreen && "mt-1 text-base",
+                                )}
+                            >
                                 {outcomeDetails.title}
                             </p>
-                            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                                {outcomeDetails.message}
-                            </p>
+                            {!isFullscreen && (
+                                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                                    {outcomeDetails.message}
+                                </p>
+                            )}
                         </div>
 
-                        <p
-                            aria-live="polite"
-                            className="mt-4 text-sm text-danger"
-                        >
-                            {fullscreenError}
-                        </p>
+                        {fullscreenError && (
+                            <p
+                                aria-live="polite"
+                                className={cn(
+                                    "mt-4 text-sm text-danger",
+                                    isFullscreen &&
+                                        "mt-2 text-xs [@media(max-height:500px)]:col-span-3",
+                                )}
+                            >
+                                {fullscreenError}
+                            </p>
+                        )}
                     </aside>
+                </div>
                 </div>
             </VisualizationShell>
         </div>

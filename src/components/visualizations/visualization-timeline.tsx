@@ -9,16 +9,22 @@ interface VisualizationTimelineProps {
     steps: TimelineStep[];
     currentStep: number;
     onStepSelect: (step: number) => void;
+    compact?: boolean;
 }
 
 export function VisualizationTimeline({
     steps,
     currentStep,
     onStepSelect,
+    compact = false,
 }: VisualizationTimelineProps) {
     return (
         <div>
-            <div className="mb-3 flex items-center justify-between">
+            <div
+                className={`mb-3 items-center justify-between ${
+                    compact ? "hidden" : "flex"
+                }`}
+            >
                 <p className="text-sm font-bold text-foreground">
                     Visualization timeline
                 </p>
@@ -28,7 +34,13 @@ export function VisualizationTimeline({
                 </p>
             </div>
 
-            <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <ol
+                className={`grid gap-2 ${
+                    compact
+                        ? "grid-cols-6 gap-1 sm:gap-2"
+                        : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+                }`}
+            >
                 {steps.map((step, index) => {
                     const isActive = index === currentStep;
                     const isComplete = index < currentStep;
@@ -39,7 +51,11 @@ export function VisualizationTimeline({
                                 type="button"
                                 onClick={() => onStepSelect(index)}
                                 aria-current={isActive ? "step" : undefined}
-                                className={`flex min-h-16 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition ${isActive
+                                className={`flex w-full items-center rounded-xl border text-left transition ${
+                                    compact
+                                        ? "min-h-9 justify-center gap-1 px-1 py-1 sm:min-h-10 sm:justify-start sm:gap-2 sm:px-2 [@media(max-height:500px)]:min-h-8"
+                                        : "min-h-16 gap-3 px-3 py-2"
+                                } ${isActive
                                         ? "border-brand bg-brand-soft text-foreground"
                                         : isComplete
                                             ? "border-success/40 bg-success-soft text-foreground"
@@ -47,7 +63,9 @@ export function VisualizationTimeline({
                                     }`}
                             >
                                 <span
-                                    className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${isActive
+                                    className={`flex shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${
+                                        compact ? "size-6" : "size-7"
+                                    } ${isActive
                                             ? "bg-brand text-white"
                                             : isComplete
                                                 ? "bg-success text-white"
@@ -57,7 +75,13 @@ export function VisualizationTimeline({
                                     {index + 1}
                                 </span>
 
-                                <span className="text-xs font-bold leading-5">
+                                <span
+                                    className={`font-bold ${
+                                        compact
+                                            ? "hidden text-[11px] leading-4 sm:inline [@media(max-height:500px)]:hidden"
+                                            : "text-xs leading-5"
+                                    }`}
+                                >
                                     {step.title}
                                 </span>
                             </button>
