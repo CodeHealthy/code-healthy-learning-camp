@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import {
-    ArrowLeft,
     BookOpen,
     GitBranch,
 } from "lucide-react";
 
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { VisualizationSequenceNavigation } from "@/components/navigation/visualization-sequence-navigation";
 import { ButtonLink } from "@/components/ui/buttons";
 import { DecisionFlowLab } from "@/components/visualizations/decision-flow/decision-flow-lab";
 
@@ -36,6 +36,7 @@ export default function DecisionFlowVisualizationPage() {
                             },
                             {
                                 label: "Programming Fundamentals",
+                                href: "/visualizations/programming-fundamentals",
                             },
                             {
                                 label: "Decision Flow",
@@ -80,19 +81,7 @@ export default function DecisionFlowVisualizationPage() {
 
             <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
                 <DecisionFlowLab />
-
-                <div className="mt-8">
-                    <ButtonLink
-                        href="/visualizations"
-                        variant="ghost"
-                    >
-                        <ArrowLeft
-                            aria-hidden="true"
-                            className="size-4"
-                        />
-                        All visualizations
-                    </ButtonLink>
-                </div>
+                <VisualizationSequenceNavigation currentVisualizationId="decision-flow" />
             </section>
         </main>
     );

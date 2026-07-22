@@ -689,13 +689,16 @@ export default function ConditionsLessonPage() {
                             Variables and values
                         </Link>
 
-                        <span className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-surface-muted px-5 py-3 font-bold text-muted-foreground">
-                            Loops coming soon
+                        <Link
+                            href="/learn/programming-fundamentals/loops"
+                            className="inline-flex items-center gap-2 rounded-lg font-bold text-brand transition hover:text-brand-strong"
+                        >
+                            Loops and repetition
                             <ArrowRight
                                 aria-hidden="true"
                                 className="size-4"
                             />
-                        </span>
+                        </Link>
                     </nav>
                 </div>
             </article>

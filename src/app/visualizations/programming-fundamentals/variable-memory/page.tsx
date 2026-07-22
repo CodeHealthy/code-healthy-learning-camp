@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import {
-    ArrowLeft,
     BookOpen,
     MemoryStick,
 } from "lucide-react";
 
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { VisualizationSequenceNavigation } from "@/components/navigation/visualization-sequence-navigation";
 import { ButtonLink } from "@/components/ui/buttons";
 import { VariableMemoryLab } from "@/components/visualizations/variable-memory/variable-memory-lab";
 
@@ -36,6 +36,7 @@ export default function VariableMemoryVisualizationPage() {
                             },
                             {
                                 label: "Programming Fundamentals",
+                                href: "/visualizations/programming-fundamentals",
                             },
                             {
                                 label: "Variable Memory",
@@ -81,16 +82,7 @@ export default function VariableMemoryVisualizationPage() {
 
             <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
                 <VariableMemoryLab />
-
-                <div className="mt-8">
-                    <ButtonLink
-                        href="/visualizations"
-                        variant="ghost"
-                    >
-                        <ArrowLeft aria-hidden="true" className="size-4" />
-                        All visualizations
-                    </ButtonLink>
-                </div>
+                <VisualizationSequenceNavigation currentVisualizationId="variable-memory" />
             </section>
         </main>
     );

@@ -1,112 +1,20 @@
 import type { Metadata } from "next";
-import type { LucideIcon } from "lucide-react";
-import {
-    ArrowRight,
-    Braces,
-    Database,
-    GitBranch,
-    MemoryStick,
-    MessageSquareMore,
-    Network,
-    Workflow,
-} from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Layers3, Workflow } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/buttons";
 import { ContentCard } from "@/components/ui/content-card";
+import {
+    getVisualizationsByCategory,
+    visualizationCategories,
+} from "@/data/visualizations";
 
 export const metadata: Metadata = {
     title: "Interactive Visualizations",
     description:
         "Explore visual demonstrations of programming, React, Redis, Kafka, SQL, backend architecture and other development concepts.",
 };
-
-interface Visualization {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    icon: LucideIcon;
-    available: boolean;
-    href?: string;
-}
-
-const visualizations: Visualization[] = [
-    {
-        id: "variable-memory",
-        title: "Variable Memory Flow",
-        description:
-            "Watch a variable being declared, assigned, read and updated inside a simplified program memory model.",
-        category: "Programming Fundamentals",
-        icon: MemoryStick,
-        available: true,
-        href: "/visualizations/programming-fundamentals/variable-memory",
-    },
-    {
-        id: "decision-flow",
-        title: "Decision Flow",
-        description:
-            "Follow comparisons, logical operators, short-circuit evaluation and conditional branch selection step by step.",
-        category: "Programming Fundamentals",
-        icon: GitBranch,
-        available: true,
-        href: "/visualizations/programming-fundamentals/decision-flow",
-    },
-    {
-        id: "react-state",
-        title: "React State Update",
-        description:
-            "Follow a user event through an event handler, state update and component re-render.",
-        category: "React",
-        icon: Braces,
-        available: false,
-    },
-    {
-        id: "spring-request",
-        title: "Spring Boot Request Flow",
-        description:
-            "Track an HTTP request through the controller, service, repository and database layers.",
-        category: "Spring Boot",
-        icon: Workflow,
-        available: false,
-    },
-    {
-        id: "redis-cache",
-        title: "Redis Cache Hit and Miss",
-        description:
-            "Compare how an application responds when data is found in Redis versus retrieved from a database.",
-        category: "Redis",
-        icon: Database,
-        available: false,
-    },
-    {
-        id: "kafka-message",
-        title: "Kafka Message Journey",
-        description:
-            "See a producer publish records across brokers, partitions and consumer groups.",
-        category: "Apache Kafka",
-        icon: MessageSquareMore,
-        available: false,
-    },
-    {
-        id: "sql-join",
-        title: "SQL Join Visualizer",
-        description:
-            "Explore how inner, left, right and full joins combine rows from related tables.",
-        category: "SQL",
-        icon: GitBranch,
-        available: false,
-    },
-    {
-        id: "nosql-document",
-        title: "NoSQL Document Model",
-        description:
-            "Compare normalized relational records with nested document-oriented data.",
-        category: "NoSQL",
-        icon: Network,
-        available: false,
-    },
-];
 
 export default function VisualizationsPage() {
     return (
@@ -136,17 +44,17 @@ export default function VisualizationsPage() {
                     </h1>
 
                     <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
-                        Explore step-by-step visual demonstrations that reveal how
-                        programming concepts, frameworks, databases and distributed
-                        systems behave internally.
+                        Choose a subject, then work through its visualizations in a
+                        clear learning order. Every lab reveals how a concept behaves
+                        internally, one meaningful step at a time.
                     </p>
 
                     <div className="mt-9">
                         <ButtonLink
-                            href="/visualizations/programming-fundamentals/variable-memory"
+                            href="/visualizations/programming-fundamentals"
                             size="lg"
                         >
-                            Launch Variable Memory Lab
+                            Explore Programming Fundamentals
                             <ArrowRight aria-hidden="true" className="size-5" />
                         </ButtonLink>
                     </div>
@@ -158,51 +66,184 @@ export default function VisualizationsPage() {
                     <p className="font-bold text-brand">Visualization library</p>
 
                     <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-                        Explore concepts visually
+                        Explore by category
                     </h2>
 
                     <p className="mt-5 text-lg leading-8 text-muted-foreground">
-                        Each visualization will include playback controls, guided steps,
-                        plain-language explanations and reduced-motion support.
+                        Start with an available category or preview the subjects being
+                        prepared next. Labs inside each category follow a deliberate
+                        sequence, so the next concept is always easy to find.
                     </p>
                 </div>
 
-                <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {visualizations.map((visualization) => {
-                        const Icon = visualization.icon;
+                <nav
+                    aria-label="Visualization categories"
+                    className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                >
+                    {visualizationCategories.map((category) => {
+                        const CategoryIcon = category.icon;
+                        const categoryVisualizations =
+                            getVisualizationsByCategory(category.id);
+                        const availableCount = categoryVisualizations.filter(
+                            (visualization) => visualization.available,
+                        ).length;
 
                         return (
-                            <ContentCard
-                                key={visualization.id}
-                                icon={Icon}
-                                eyebrow={visualization.category}
-                                title={visualization.title}
-                                description={visualization.description}
-                                className="flex h-full flex-col"
-                                footer={
-                                    visualization.available && visualization.href ? (
-                                        <div className="flex items-center justify-between gap-4">
-                                            <Badge variant="success">Available</Badge>
-
-                                            <ButtonLink
-                                                href={visualization.href}
-                                                variant="ghost"
-                                                size="sm"
-                                            >
-                                                Open
-                                                <ArrowRight
-                                                    aria-hidden="true"
-                                                    className="size-4"
-                                                />
-                                            </ButtonLink>
-                                        </div>
-                                    ) : (
-                                        <Badge variant="neutral">Coming soon</Badge>
-                                    )
-                                }
-                            />
+                            <Link
+                                key={category.id}
+                                href={category.href ?? `#${category.id}`}
+                                className="group rounded-2xl border border-border bg-surface p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transform-none motion-reduce:transition-none"
+                            >
+                                <span className="flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                                    <CategoryIcon
+                                        aria-hidden="true"
+                                        className="size-5"
+                                    />
+                                </span>
+                                <span className="mt-4 block font-display font-bold text-foreground">
+                                    {category.title}
+                                </span>
+                                <span className="mt-1 block text-sm text-muted-foreground">
+                                    {availableCount > 0
+                                        ? `${availableCount} available`
+                                        : "Coming soon"}
+                                </span>
+                            </Link>
                         );
                     })}
+                </nav>
+            </section>
+
+            <div className="border-t border-border bg-surface-muted/40">
+                {visualizationCategories.map((category, categoryIndex) => {
+                    const CategoryIcon = category.icon;
+                    const categoryVisualizations = getVisualizationsByCategory(
+                        category.id,
+                    );
+                    const availableCount = categoryVisualizations.filter(
+                        (visualization) => visualization.available,
+                    ).length;
+
+                    return (
+                        <section
+                            id={category.id}
+                            key={category.id}
+                            className={`scroll-mt-24 ${
+                                categoryIndex > 0 ? "border-t border-border" : ""
+                            }`}
+                        >
+                            <div className="mx-auto max-w-7xl px-6 py-14 lg:py-18">
+                                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                                    <div className="max-w-3xl">
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex size-11 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                                                <CategoryIcon
+                                                    aria-hidden="true"
+                                                    className="size-5"
+                                                />
+                                            </span>
+                                            <Badge
+                                                variant={
+                                                    availableCount > 0
+                                                        ? "success"
+                                                        : "neutral"
+                                                }
+                                            >
+                                                {availableCount > 0
+                                                    ? `${availableCount} visualizations available`
+                                                    : "Category in development"}
+                                            </Badge>
+                                        </div>
+
+                                        <h2 className="mt-5 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
+                                            {category.title}
+                                        </h2>
+                                        <p className="mt-3 leading-7 text-muted-foreground">
+                                            {category.description}
+                                        </p>
+                                    </div>
+
+                                    {category.href && (
+                                        <ButtonLink
+                                            href={category.href}
+                                            variant="secondary"
+                                        >
+                                            View category
+                                            <ArrowRight
+                                                aria-hidden="true"
+                                                className="size-4"
+                                            />
+                                        </ButtonLink>
+                                    )}
+                                </div>
+
+                                <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                    {categoryVisualizations.map(
+                                        (visualization, visualizationIndex) => {
+                                            const VisualizationIcon = visualization.icon;
+
+                                            return (
+                                                <ContentCard
+                                                    key={visualization.id}
+                                                    icon={VisualizationIcon}
+                                                    eyebrow={
+                                                        visualization.available
+                                                            ? `Visualization ${visualizationIndex + 1} of ${categoryVisualizations.length}`
+                                                            : "Planned visualization"
+                                                    }
+                                                    title={visualization.title}
+                                                    description={visualization.description}
+                                                    className="flex h-full flex-col"
+                                                    footer={
+                                                        visualization.available &&
+                                                        visualization.href ? (
+                                                            <div className="flex items-center justify-between gap-4">
+                                                                <Badge variant="success">
+                                                                    Available
+                                                                </Badge>
+                                                                <ButtonLink
+                                                                    href={visualization.href}
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                >
+                                                                    Open lab
+                                                                    <ArrowRight
+                                                                        aria-hidden="true"
+                                                                        className="size-4"
+                                                                    />
+                                                                </ButtonLink>
+                                                            </div>
+                                                        ) : (
+                                                            <Badge variant="neutral">
+                                                                Coming soon
+                                                            </Badge>
+                                                        )
+                                                    }
+                                                />
+                                            );
+                                        },
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    );
+                })}
+            </div>
+
+            <section className="border-t border-border bg-surface">
+                <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p className="font-display text-lg font-bold">
+                            Prefer complete guided lessons?
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Visual labs connect directly to their matching learning path.
+                        </p>
+                    </div>
+                    <ButtonLink href="/learn" variant="secondary">
+                        <Layers3 aria-hidden="true" className="size-4" />
+                        Browse learning paths
+                    </ButtonLink>
                 </div>
             </section>
         </main>

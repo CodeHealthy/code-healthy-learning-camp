@@ -44,8 +44,8 @@ const lessons = [
     description:
       "Visualize how loops repeatedly execute instructions until a condition changes.",
     href: "/learn/programming-fundamentals/loops",
-    duration: "15 minutes",
-    available: false,
+    duration: "18 minutes",
+    available: true,
   },
   {
     number: 4,

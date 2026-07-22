@@ -6,7 +6,7 @@ to explain how programming concepts and software technologies work.
 
 The learning approach is:
 
-> Explain simply, demonstrate visually, practise interactively, and verify
+> Explain simply, demonstrate visually, Practice interactively, and verify
 > understanding.
 
 ## Current learning experience
@@ -16,11 +16,14 @@ The project currently includes:
 - A Programming Fundamentals learning path
 - A complete Variables and Values lesson
 - A complete Conditions and Decisions lesson
+- A complete Loops and Repetition lesson
 - An embedded variable-memory demonstration
 - A standalone Variable Memory Lab with playback controls, editable values,
   animation speed, a timeline, and fullscreen support
 - An interactive Decision Flow Lab covering comparisons, short-circuiting and
   conditional branch selection
+- An interactive Loop Execution Timeline Lab covering initialization, checks,
+  body execution, updates and stopping conditions
 - A reusable multiple-choice quiz
 - Light, dark, and system themes
 - Responsive navigation and accessible interaction patterns

@@ -70,7 +70,7 @@ export const courses: Course[] = [
     id: "sql",
     title: "SQL",
     description:
-      "Practise tables, relationships, queries, joins, indexes, normalization and transactions.",
+      "Practice tables, relationships, queries, joins, indexes, normalization and transactions.",
     href: "/learn/sql",
     icon: GitBranch,
     status: "coming-soon",

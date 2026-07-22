@@ -21,6 +21,10 @@ const learningLinks = [
         label: "Conditions and Decisions",
         href: "/learn/programming-fundamentals/conditions",
     },
+    {
+        label: "Loops and Repetition",
+        href: "/learn/programming-fundamentals/loops",
+    },
 ];
 
 const platformLinks = [
@@ -35,7 +39,6 @@ const platformLinks = [
 ];
 
 const upcomingTopics = [
-    "Loops",
     "Functions",
     "Arrays",
     "Objects",
@@ -138,7 +141,7 @@ export function SiteFooter() {
                         © {new Date().getFullYear()} CodeHealthyLearningCamp.
                     </p>
 
-                    <p>Learn simply. Visualize clearly. Practise confidently.</p>
+                    <p>Learn simply. Visualize clearly. Practice confidently.</p>
                 </div>
             </div>
         </footer>
