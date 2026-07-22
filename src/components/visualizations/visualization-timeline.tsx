@@ -28,7 +28,7 @@ export function VisualizationTimeline({
                 </p>
             </div>
 
-            <ol className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
                 {steps.map((step, index) => {
                     const isActive = index === currentStep;
                     const isComplete = index < currentStep;

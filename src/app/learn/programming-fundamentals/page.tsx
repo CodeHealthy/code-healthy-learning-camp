@@ -35,8 +35,8 @@ const lessons = [
     description:
       "Learn how programs make decisions using Boolean expressions and conditions.",
     href: "/learn/programming-fundamentals/conditions",
-    duration: "12 minutes",
-    available: false,
+    duration: "15 minutes",
+    available: true,
   },
   {
     number: 3,

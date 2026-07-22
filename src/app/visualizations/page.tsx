@@ -43,6 +43,16 @@ const visualizations: Visualization[] = [
         href: "/visualizations/programming-fundamentals/variable-memory",
     },
     {
+        id: "decision-flow",
+        title: "Decision Flow",
+        description:
+            "Follow comparisons, logical operators, short-circuit evaluation and conditional branch selection step by step.",
+        category: "Programming Fundamentals",
+        icon: GitBranch,
+        available: true,
+        href: "/visualizations/programming-fundamentals/decision-flow",
+    },
+    {
         id: "react-state",
         title: "React State Update",
         description:

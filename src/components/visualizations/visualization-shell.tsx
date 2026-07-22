@@ -24,7 +24,7 @@ export function VisualizationShell({
     return (
         <section
             className={cn(
-                "overflow-hidden rounded-3xl border border-border bg-surface shadow-xl",
+                "max-w-full min-w-0 overflow-hidden rounded-3xl border border-border bg-surface shadow-xl",
                 className,
             )}
         >

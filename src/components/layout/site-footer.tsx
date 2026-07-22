@@ -17,6 +17,10 @@ const learningLinks = [
         label: "Variables and Values",
         href: "/learn/programming-fundamentals/variables",
     },
+    {
+        label: "Conditions and Decisions",
+        href: "/learn/programming-fundamentals/conditions",
+    },
 ];
 
 const platformLinks = [
@@ -31,10 +35,10 @@ const platformLinks = [
 ];
 
 const upcomingTopics = [
-    "React",
-    "Spring Boot",
-    "Redis",
-    "Apache Kafka",
+    "Loops",
+    "Functions",
+    "Arrays",
+    "Objects",
 ];
 
 export function SiteFooter() {

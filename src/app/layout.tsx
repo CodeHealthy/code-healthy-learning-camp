@@ -59,10 +59,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
         <SkipLink />
 
-        <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen min-w-0 flex-col">
           <Header />
 
-          <div className="flex-1">{children}</div>
+          <div className="min-w-0 flex-1">{children}</div>
 
           <SiteFooter />
         </div>

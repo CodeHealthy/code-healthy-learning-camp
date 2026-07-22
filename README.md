@@ -15,9 +15,12 @@ The project currently includes:
 
 - A Programming Fundamentals learning path
 - A complete Variables and Values lesson
+- A complete Conditions and Decisions lesson
 - An embedded variable-memory demonstration
 - A standalone Variable Memory Lab with playback controls, editable values,
   animation speed, a timeline, and fullscreen support
+- An interactive Decision Flow Lab covering comparisons, short-circuiting and
+  conditional branch selection
 - A reusable multiple-choice quiz
 - Light, dark, and system themes
 - Responsive navigation and accessible interaction patterns
@@ -49,7 +52,8 @@ src/
 │   ├── navigation/      Shared navigation components
 │   ├── theme/           Theme controls
 │   ├── ui/              Reusable interface primitives
-│   └── visualizations/  Shared and concept-specific visualization components
+│   ├── visualizations/  Shared and concept-specific visualization components
+│   └── widget/          Reusable interactive input widgets
 ├── content/             Reserved for scalable learning content
 ├── data/                Course and navigation data
 ├── lib/                 Shared utilities
